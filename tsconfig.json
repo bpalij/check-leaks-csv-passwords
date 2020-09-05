@@ -1,0 +1,9 @@
+{
+  "extends": "@tsconfig/node12/tsconfig.json",
+  "compilerOptions": {
+    "outDir": "dist",
+    "esModuleInterop": true
+  },
+  "include": ["**/*.ts", "*.ts"],
+  "exclude": ["node_modules/**/*", "node_modules/*"]  
+}
