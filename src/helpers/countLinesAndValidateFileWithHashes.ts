@@ -8,7 +8,7 @@ export default (path: PathLike, encoding: BufferEncoding): Promise<number> => ne
   const fileStream = fs.createReadStream(path, { encoding });
   const rl = readline.createInterface(fileStream);
 
-  const interval = setInterval(() => { console.log(`Already found and validated ${beautifullyPrintNumber(lines)} in file with hashes`); }, 1000);
+  const interval = setInterval(() => { console.log(`Already found and validated ${beautifullyPrintNumber(lines)} lines in file with hashes`); }, 1000);
   rl.on('line', (line) => {
     if (!/^[0-9A-F]{40,40}:[0-9]+$/.test(line)) {
       clearInterval(interval);

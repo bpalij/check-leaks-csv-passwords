@@ -1,24 +1,30 @@
 import fs, { PathLike } from 'fs';
 import readline from 'readline';
-import { passwordObjectWithHash, passwordObjectsWithHashAndLeaks, passwordObject } from '../interfaces/passwordObject';
+import {
+  // passwordObjectWithHash,
+  // passwordObjectsWithHashAndLeaks,
+  passwordObject,
+  hashWithLeaksAndPasswordObjects,
+  // hashWithPasswordObjects,
+} from '../interfaces/passwordObject';
 import beautifullyPrintNumber from './beautifullyPrintNumber';
 import deepCopy from './deepCopy';
 
 export default (
-  hashesWithPasswordObjects: Map<string, Array<Readonly<passwordObject>>>,
+  hashesWithPasswordObjects: Map<string, Array<passwordObject>>,
   path: PathLike,
   encoding: BufferEncoding,
   numberOfLines?: number,
-):Promise<Array<passwordObjectsWithHashAndLeaks>> => new Promise((resolve, reject) => {
+):Promise<Array<hashWithLeaksAndPasswordObjects>> => new Promise((resolve, reject) => {
   let lines = 0;
   let leakedHashes = 0;
   let totalLeaks = 0;
-  let outputArr: Array<passwordObjectsWithHashAndLeaks> = [];
+  let outputArr: Array<hashWithLeaksAndPasswordObjects> = [];
   const fileStream = fs.createReadStream(path, { encoding });
   const rl = readline.createInterface(fileStream);
 
   const interval = setInterval(() => {
-    console.log(`Already checked ${beautifullyPrintNumber(lines)}${numberOfLines === undefined ? ' ' : ` from ${beautifullyPrintNumber(numberOfLines)} `}in file with hashes`);
+    console.log(`Already checked ${beautifullyPrintNumber(lines)}${numberOfLines === undefined ? ' ' : ` from ${beautifullyPrintNumber(numberOfLines)} `}lines in file with hashes`);
   }, 1000);
   rl.on('line', (line) => {
     if (!/^[0-9A-F]{40,40}:[0-9]+$/.test(line)) {
@@ -29,7 +35,7 @@ export default (
     if (hashesWithPasswordObjects.has(hash)) {
       const passwordObjects = hashesWithPasswordObjects.get(hash);
       if (passwordObjects) {
-        const objForAdd = {
+        const objForAdd: hashWithLeaksAndPasswordObjects = {
           hash,
           leaks: +leaks,
           readableLeaks: beautifullyPrintNumber(+leaks),

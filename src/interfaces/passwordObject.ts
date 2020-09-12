@@ -6,12 +6,22 @@ export interface passwordObject {
 
 export interface passwordObjectWithHash {
   hash: string,
-  passwordObject: Readonly<passwordObject>,
+  passwordObject: passwordObject,
 }
 
-export interface passwordObjectsWithHashAndLeaks {
+export interface hashWithPasswordObjects {
+  hash: string,
+  passwordObjects: Array<passwordObject>
+}
+
+// export interface passwordObjectsWithHashAndLeaks {
+//   leaks: number,
+//   readableLeaks: string,
+//   hash: string,
+//   passwordObjects: Array<Readonly<passwordObject>>,
+// }
+
+export interface hashWithLeaksAndPasswordObjects extends hashWithPasswordObjects {
   leaks: number,
   readableLeaks: string,
-  hash: string,
-  passwordObjects: Array<Readonly<passwordObject>>,
 }
