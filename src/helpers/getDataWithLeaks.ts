@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import fs, { PathLike } from 'fs';
 import readline from 'readline';
 import {
@@ -17,14 +18,20 @@ export default (
   numberOfLines?: number,
 ):Promise<Array<hashWithLeaksAndPasswordObjects>> => new Promise((resolve, reject) => {
   let lines = 0;
+  let previousLines = 0;
   let leakedHashes = 0;
   let totalLeaks = 0;
   let outputArr: Array<hashWithLeaksAndPasswordObjects> = [];
   const fileStream = fs.createReadStream(path, { encoding });
   const rl = readline.createInterface(fileStream);
 
+  let previousDate:Date = new Date();
   const interval = setInterval(() => {
+    const currentDate = new Date();
     console.log(`Already checked ${beautifullyPrintNumber(lines)}${numberOfLines === undefined ? ' ' : ` from ${beautifullyPrintNumber(numberOfLines)} `}lines in file with hashes`);
+    console.log(`Reading ${beautifullyPrintNumber(Math.round((lines - previousLines) / ((currentDate.getTime() - previousDate.getTime()) / 1000)))} lines in one second`);
+    previousLines = lines;
+    previousDate = currentDate;
   }, 1000);
   rl.on('line', (line) => {
     if (!/^[0-9A-F]{40,40}:[0-9]+$/.test(line)) {

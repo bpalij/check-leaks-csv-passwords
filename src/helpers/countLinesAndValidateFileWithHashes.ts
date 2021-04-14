@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import fs, { PathLike } from 'fs';
 import readline from 'readline';
 import beautifullyPrintNumber from './beautifullyPrintNumber';

@@ -1,11 +1,13 @@
 {
-  "name": "check-leaks-json-passwords",
+  "name": "check-leaks-csv-passwords",
   "version": "0.0.0",
-  "description": "Check if passwords in json file (like bitwarden export) exist in txt file of hashes of leaked password (like haveibeenpwned.com) and output info to json file",
+  "description": "Check if passwords in csv file (like bitwarden export) exist in txt file of hashes of leaked password (like haveibeenpwned.com) and output info to csv file",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "ts-node index.ts"
+    "start": "ts-node index.ts",
+    "lint": "eslint --ext .js,.ts **/*",
+    "lint-fix": "eslint --ext .js,.ts **/* --fix"
   },
   "repository": {
     "type": "git",
@@ -23,6 +25,7 @@
   },
   "homepage": "https://github.com/bpalij/check-leaks-json-passwords#readme",
   "dependencies": {
+    "fast-csv": "^4.3.6",
     "hasha": "^5.2.0"
   },
   "devDependencies": {

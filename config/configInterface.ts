@@ -1,5 +1,5 @@
 export interface configInterface {
-  inputJsonPath: string,
+  inputCsvPath: string,
   hashesOfLeaksPath: string,
-  outputJsonPath: string,
+  outputCsvPath: string,
 }

@@ -1,12 +1,17 @@
 export interface passwordObject {
-  login: {
-    password: string
-  }
+  // eslint-disable-next-line camelcase
+  login_password: string,
+  [key: string]: string | undefined,
 }
 
 export interface passwordObjectWithHash {
   hash: string,
   passwordObject: passwordObject,
+}
+
+export interface passwordObjectWithInjectedHash extends passwordObject {
+  // eslint-disable-next-line camelcase
+  login_password_hash: string,
 }
 
 export interface hashWithPasswordObjects {
@@ -22,6 +27,13 @@ export interface hashWithPasswordObjects {
 // }
 
 export interface hashWithLeaksAndPasswordObjects extends hashWithPasswordObjects {
-  leaks: number,
+  leaks: number | string,
   readableLeaks: string,
+}
+
+export interface passwordObjectWithInjectedHashAndLeaks extends passwordObjectWithInjectedHash {
+  // eslint-disable-next-line camelcase
+  login_password_leaks: string,
+  // eslint-disable-next-line camelcase
+  login_password_readable_leaks: string,
 }
