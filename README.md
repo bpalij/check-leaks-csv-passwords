@@ -2,7 +2,7 @@
 Check if passwords in csv file (compatible with bitwarden export) exist in txt file of hashes of leaked password (compatible with haveibeenpwned.com sha1 file) and output info to csv file
 Remake of my repository for json check, but with csv and some improvements
 
-Worked with node 14
+Worked with node 12 and 14
 
 ## How to use
 1. Export csv from your password manager (compatible with bitwarden)
