@@ -10,6 +10,7 @@ import getDataWithLeaks from './helpers/getDataWithLeaks';
 import deepCopy from './helpers/deepCopy';
 import readCsvInputFile from './helpers/readCsvInputFile';
 import writePreparedDataToCsv from './helpers/writePreparedDataToCsv';
+import timeDurationBetweenDatesInWords from './helpers/timeDurationBetweenDatesInWords';
 import { passwordObject, passwordObjectWithInjectedHashAndLeaks } from './interfaces/passwordObject';
 
 export default async (): Promise<void> => {
@@ -19,6 +20,8 @@ export default async (): Promise<void> => {
   // const jsonData = JSON.parse(await fs.promises.readFile(config.inputJsonPath, { encoding: 'utf-8' }));
   // console.log(jsonData);
   // const input = validateInputJson(jsonData);
+  const startDate = new Date();
+  console.log('Reading input csv');
   const input:Array<passwordObject> = await readCsvInputFile(config.inputCsvPath);
   // console.log(input);
   if (!input.length) {
@@ -85,6 +88,9 @@ export default async (): Promise<void> => {
   console.log('Writing data to CSV');
   await writePreparedDataToCsv(config.outputCsvPath, flattenedData);
   console.log('Written data to CSV');
+
+  const endDate = new Date();
+  console.log(`Finished in ${timeDurationBetweenDatesInWords(startDate, endDate)}`);
 
   // console.log('Writing output to readable JSON file');
   // await fs.promises.writeFile(
