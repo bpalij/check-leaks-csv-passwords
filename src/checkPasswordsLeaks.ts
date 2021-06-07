@@ -53,7 +53,13 @@ export default async (): Promise<void> => {
   // }
 
   console.log('Checking hashes for leaks');
-  const dataWithLeaks = await getDataWithLeaks(hashesMap, config.hashesOfLeaksPath, 'utf-8'/* , lines */);
+  const dataWithLeaks = await getDataWithLeaks(
+    hashesMap,
+    config.hashesOfLeaksPath, {
+      encoding: 'utf-8',
+      sizeOfCache: config.sizeOfCache,
+    },
+  );
   console.log('Checked hashes for leaks');
   // console.log(dataWithLeaks);
   // console.log(JSON.stringify(dataWithLeaks, undefined, 2));
