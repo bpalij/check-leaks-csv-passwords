@@ -1,5 +1,5 @@
 export default (number: number):string => {
-  if (number === Infinity || number === -Infinity) {
+  if (number === Infinity || number === -Infinity || !number) {
     return `${number}`;
   }
   const intPartNumber = Math.floor(number);

@@ -24,8 +24,9 @@ export default (
   let previousLines = 0;
   let leakedHashes = 0;
   let totalLeaks = 0;
-  let outputArr: Array<hashWithLeaksAndPasswordObjects> = [];
-  let cachedLines: Array<string> = [];
+  let outputArray: Array<hashWithLeaksAndPasswordObjects> = [];
+  // let cachedLinesArr: Array<string> = [];
+  let cachedLinesOfHashesAndLeaks: Map<string, string> = new Map();
   const fileStream = fs.createReadStream(path, { encoding });
   const rl = readline.createInterface(fileStream);
 
@@ -40,11 +41,34 @@ export default (
           readableLeaks: beautifullyPrintNumber(+leaks),
           passwordObjects: deepCopy(passwordObjects),
         };
-        outputArr = [...deepCopy(outputArr), objForAdd];
+        outputArray = [...deepCopy(outputArray), objForAdd];
         leakedHashes += 1;
         totalLeaks += +leaks;
       }
     }
+  };
+
+  const addOurLeakedHashesDataToOutputArrayAgainstHashesInPieceOfFile = (
+    ourHashesData: Map<string, Array<passwordObject>>,
+    hashesInPieceOfFileData: Map<string, string>,
+  ): void => {
+    [...ourHashesData.keys()].forEach((ourHash) => {
+      if (hashesInPieceOfFileData.has(ourHash)) {
+        const passwordObjects = ourHashesData.get(ourHash);
+        const leaks = hashesInPieceOfFileData.get(ourHash);
+        if (passwordObjects) {
+          const objForAdd: hashWithLeaksAndPasswordObjects = {
+            hash: ourHash,
+            leaks: +(leaks || NaN),
+            readableLeaks: beautifullyPrintNumber(+(leaks || NaN)),
+            passwordObjects: deepCopy(passwordObjects),
+          };
+          outputArray = [...deepCopy(outputArray), objForAdd];
+          leakedHashes += 1;
+          totalLeaks += +(leaks || 0);
+        }
+      }
+    });
   };
 
   let previousDate:Date = new Date();
@@ -61,7 +85,9 @@ export default (
       reject(new Error(`Line ${lines} in hashes file is incorrect! It must be like "uppercase sha1 hash":"number of leaks"`));
     }
     if (lines && !(lines % sizeOfCache)) {
-      // console.log(cachedLines);
+      // console.log(cachedLinesOfHashesAndLeaks);
+      // eslint-disable-next-line max-len
+      addOurLeakedHashesDataToOutputArrayAgainstHashesInPieceOfFile(hashesWithPasswordObjects, cachedLinesOfHashesAndLeaks);
       // cachedLines.forEach((cachedLine) => {
       //   const [hash, leaks] = cachedLine.split(':');
       //   if (hashesWithPasswordObjects.has(hash)) {
@@ -79,10 +105,11 @@ export default (
       //     }
       //   }
       // });
-      cachedLines.forEach(checkLineForLeakedHashAndAddIfNeeded);
-      cachedLines = [];
+      // cachedLinesArr.forEach(checkLineForLeakedHashAndAddIfNeeded);
+      // cachedLinesArr = [];
+      cachedLinesOfHashesAndLeaks = new Map();
     }
-    // const [hash, leaks] = line.split(':');
+    const [hash, leaks] = line.split(':');
     // if (hashesWithPasswordObjects.has(hash)) {
     //   const passwordObjects = hashesWithPasswordObjects.get(hash);
     //   if (passwordObjects) {
@@ -97,13 +124,16 @@ export default (
     //     totalLeaks += +leaks;
     //   }
     // }
-    cachedLines.push(line);
+    // cachedLinesArr.push(line);
+    cachedLinesOfHashesAndLeaks.set(hash, leaks);
     lines += 1;
   });
   rl.on('close', () => {
     clearInterval(interval);
-    cachedLines.forEach(checkLineForLeakedHashAndAddIfNeeded);
+    // cachedLinesArr.forEach(checkLineForLeakedHashAndAddIfNeeded);
+    // eslint-disable-next-line max-len
+    addOurLeakedHashesDataToOutputArrayAgainstHashesInPieceOfFile(hashesWithPasswordObjects, cachedLinesOfHashesAndLeaks);
     console.log(`Checked all ${beautifullyPrintNumber(lines)} lines. Found ${beautifullyPrintNumber(leakedHashes)} hashes with total ${beautifullyPrintNumber(totalLeaks)} leaks`);
-    resolve(outputArr);
+    resolve(outputArray);
   });
 });
